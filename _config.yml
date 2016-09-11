@@ -9,7 +9,7 @@
 title: Maorongrong
 brief-intro: smile like sunshine
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://zam121118.github.io" # the base hostname & protocol for your site
+url: "https://zam121118.github.io" # the base hostname & protocol for your site
 
 permalink: /:year/:month/:day/:title/
 

@@ -8,6 +8,10 @@ icon: bookmark
 * content
 {:toc}
 
+
+
+<!--  请以markdown语法写下你的收藏
+
 ## 工具
 
 * [box-shadow generator](http://www.cssmatic.com/box-shadow)
@@ -238,7 +242,7 @@ Syntax Theme: Atom Dark or One Dark
 
     95年出生的全栈。卢涛南，英文名 Randy，用 djyde 这个ID混迹于网络。
 
-* [JS前端开发群月报 -豪情等人维护](http://www.kancloud.cn/jsfront/month/82796)
+* [JS前端开发群月报 -豪情等人维护](http://www.kancloud.cn/jsfront/month/82796) -->
 
 ## Comments
 

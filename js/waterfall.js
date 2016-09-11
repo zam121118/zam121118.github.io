@@ -12,6 +12,8 @@
     /**
      * 内容JSON
      */
+     /**
+     *下面是模板作者自己的Demo,删除后可添加自己的
     var demoContent = [{
         demo_link: 'http://gaohaoyang.github.io/test/headerTransition/',
         img_link: 'https://ooo.0o0.ooo/2016/06/20/5768c1597d1fe.png',
@@ -125,6 +127,15 @@
         core_tech: 'HTML BootStrap',
         description: '使用BootStrap仿照知乎做了一个静态页面。'
     }];
+    */
+    var demoContent = [{
+        demo_link: '',
+        img_link: '',
+        code_link: '',
+        title: '',
+        core_tech: '',
+        description: ''
+    }]
 
     contentInit(demoContent) //内容初始化
     waitImgsLoad() //等待图片加载，并执行布局初始化
