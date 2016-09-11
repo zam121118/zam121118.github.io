@@ -10,14 +10,10 @@ author: Amy Zhong
 * content
 {:toc}
 
-实现容器化的第一步，搭建私有仓库。
+实现容器化的第一步，搭建私有仓库。教育网用户可以换成清华的源。
 
 
 
-
-[参考：Docker私有仓库Registry搭建](http://www.open-open.com/lib/view/open1456666305640.html)
-
-NOTE：安装docker前，我把源换成了清华的。
 
 ## server环境
 
@@ -233,11 +229,5 @@ ae81bbda2b6c: Pull complete
 Digest: sha256:110f9122f773b4d4898a7921019b4faf5a33873b17062b07f009cdfde9f32d77
 Status: Downloaded newer image for 202.117.16.167:5000/ubuntu:latest
 ```
-
-
-
-
-
-
 
   [1]: https://docs.docker.com/engine/installation/linux/ubuntulinux/
