@@ -1,16 +1,19 @@
-﻿---
+---
 layout: post
-title:  "搭建 docker 私有仓库"
+title:  搭建 docker 私有仓库
 date:   2016-09-11 20:50:05
 categories: Docker
 tags: Docker Linux
 author: Amy Zhong
 ---
 
+
 * content
+
 {:toc}
 
 实现容器化的第一步，搭建私有仓库。教育网用户可以换成清华的源。
+
 
 
 
