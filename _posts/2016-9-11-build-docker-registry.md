@@ -21,7 +21,7 @@ IP：X.X.X.167
 
 查看系统：
 
-```
+```sh
 cloud@cloud-m3-01:~$ uname -a
 Linux cloud-m3-01 3.19.0-58-generic #64~14.04.1-Ubuntu SMP Fri Mar 18 19:05:43 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
 cloud@cloud-m3-01:~$ cat /etc/issue
@@ -32,7 +32,7 @@ cloud-m3-01
 
 查看资源：
 
-```
+```sh
 cloud@cloud-m3-01:~$ free -h
              total       used       free     shared    buffers     cached
 Mem:           39G       3.9G        35G       9.8M       275M       2.5G
@@ -53,16 +53,24 @@ none            100M   40K  100M   1% /run/user
 
 查看CPU配置：应该是2个Cpu,每个Cpu有6个core,应该是Intel的U,支持超线程,所以显示24个逻辑CPU 
 
-```
-查看物理CPU的个数
+* 查看物理CPU的个数
+
+```sh
+
 cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l
 2
+```
 
-查看逻辑CPU的个数
+* 查看逻辑CPU的个数
+
+```sh
 cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "processor"| wc -l
 24
+```
 
-查看CPU是几核
+* 查看CPU是几核
+
+```sh
 cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "cores" | uniq
 cpu cores	: 6
 ```
@@ -73,7 +81,7 @@ cpu cores	: 6
 
 ## 启动仓库容器
 
-```
+```sh
 cloud@cloud-m3-01:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 registry            latest              c6c14b3960bd        5 weeks ago         33.31 MB
@@ -83,12 +91,12 @@ cloud@cloud-m3-01:~$ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
 1044750b2543        registry            "/entrypoint.sh /etc/"   3 minutes ago       Up 3 minutes        0.0.0.0:5000->5000/tcp   registry
 ```
-Registry容器逻辑上将镜像保存在容器内/var/lib/registry，实际保存server的/registry目录了。
+Registry容器逻辑上将镜像保存在容器内`/var/lib/registry`，实际保存server的`/registry`目录了。
 
 
 ### 先从docker Hub下载镜像放在本地
 
-```
+```sh
 cloud@cloud-m3-01:~$ docker search -s 100  ubuntu
 Flag --stars has been deprecated, use --filter=stars=3 instead
 NAME      DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
@@ -106,7 +114,7 @@ Status: Downloaded newer image for ubuntu:latest
 ```
 ### 下载的镜像打个tag准备推送到本地
 
-```
+```sh
 cloud@cloud-m3-01:~$ docker tag ubuntu:latest 127.0.0.1:5000/ubuntu:latest
 cloud@cloud-m3-01:~$ docker tag registry:latest 127.0.0.1:5000/registry:latest
 cloud@cloud-m3-01:~$ docker images
@@ -119,7 +127,7 @@ registry                  latest              c6c14b3960bd        5 weeks ago   
 
 ### 推送到私有仓库
 
-```
+```sh
 cloud@cloud-m3-01:~$ docker push 127.0.0.1:5000/ubuntu:latest
 The push refers to a repository [127.0.0.1:5000/ubuntu]
 0cad5e07ba33: Pushed 
@@ -140,12 +148,16 @@ latest: digest: sha256:51d8869caea35f58dd6a2309423ec5382f19c4e649b5d2c0e3898493f
 
 ### 查看server本地文件夹
 
-```
-查看本地文件夹下的镜像
+* 查看本地文件夹下的镜像
+
+```sh
 cloud@cloud-m3-01:/registry/docker/registry/v2/repositories$ ls
 registry  ubuntu
+```
 
-访问本server5000端口查看仓库
+* 访问本server5000端口查看仓库
+
+```sh
 cloud@cloud-m3-01:/registry/docker/registry/v2/repositories$ curl http://127.0.0.1:5000/v2/_catalog
 {"repositories":["registry","ubuntu"]}
 ```
@@ -154,7 +166,7 @@ cloud@cloud-m3-01:/registry/docker/registry/v2/repositories$ curl http://127.0.0
 
 ### 删除本地镜像
 
-```
+```sh
 cloud@cloud-m3-01:~$ docker images
 REPOSITORY                TAG                 IMAGE ID            CREATED             SIZE
 127.0.0.1:5000/ubuntu     latest              bd3d4369aebc        12 days ago         126.6 MB
@@ -167,12 +179,13 @@ cloud@cloud-m3-01:~$ docker rmi 127.0.0.1:5000/ubuntu
 cloud@cloud-m3-01:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 registry            latest              c6c14b3960bd        5 weeks ago         33.31 MB
-仓库只剩registry镜像，注意仓库容器正在使用该镜像，不要删除，也不要强制删除。
 ```
+仓库只剩registry镜像，注意仓库容器正在使用该镜像，不要删除，也不要强制删除。
+
 
 ### 从咱们私有仓库127.0.0.1:5000获取镜像
 
-```
+```sh
 cloud@cloud-m3-01:~$ docker pull 127.0.0.1:5000/ubuntu:latest
 latest: Pulling from ubuntu
 952132ac251a: Pull complete 
@@ -194,7 +207,7 @@ registry                latest              c6c14b3960bd        5 weeks ago     
 
 ### 确保远程server到本机网络通
 
-```
+```sh
 amy@ubuntu-host2:~$ ping 202.117.16.167
 PING 202.117.16.167 (202.117.16.167) 56(84) bytes of data.
 64 bytes from 202.117.16.167: icmp_seq=1 ttl=128 time=0.888 ms
@@ -207,15 +220,17 @@ rtt min/avg/max/mdev = 0.888/1.111/1.334/0.223 ms
 
 ### 为远程host daemon添加远程仓库
 
-```
+```sh
 amy@ubuntu-host2:~$ sudo vim /etc/default/docker
-添加：
+
+add:
+
 DOCKER_OPTS="--insecure-registry XXX.XXX.XXX.167:5000"
 ```
 
 ### 重启hosts docker服务&测试
 
-```
+```sh
 amy@ubuntu-host2:~$ sudo service docker restart
 docker stop/waiting
 docker start/running, process XXXX
