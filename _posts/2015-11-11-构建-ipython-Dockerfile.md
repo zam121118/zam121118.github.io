@@ -1,13 +1,13 @@
-﻿---
-layout: post
-title: "dockerfile 构建 ipython docker image"
-date: 2015-11-11 21:20:57
-categories: Dockerfile
-tags: Docker  Dockerfile Linux
-author: Amy Zhong
----
+﻿---    
+layout: post    
+title: "dockerfile 构建 ipython docker image"    
+date: 2015-11-11 21:20:57    
+categories: Dockerfile    
+tags: Docker  Dockerfile Linux    
+author: Amy Zhong    
+---    
 
-* content
+* content    
 {:toc}
 
 编写dockerfile构建ipython的Docker image
