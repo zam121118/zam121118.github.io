@@ -3,7 +3,8 @@ layout: post
 title:  "搭建 docker 私有仓库"
 date:   2019-09-11 20:50:05
 categories: Docker
-tags: Docker  Linux
+tags: Docker Linux
+author: Amy Zhong
 ---
 
 * content
