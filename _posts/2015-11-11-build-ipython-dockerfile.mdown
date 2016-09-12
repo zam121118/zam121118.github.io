@@ -9,11 +9,10 @@ author: Amy Zhong
 
 
 * content
-
 {:toc}
 
-编写dockerfile构建ipython的Docker image
 
+编写dockerfile构建ipython的Docker image
 
 
 
