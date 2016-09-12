@@ -9,6 +9,12 @@ icon: bookmark
 {:toc}
 
 
+## Jkeyll
+* [How Jekyll works](http://jekyllbootstrap.com/lessons/jekyll-introduction.html)
+    Jekyll如何工具，以及标准的目录格式
+
+* [Jekyll](http://jekyll.bootcss.com/)
+    Jekyll介绍
 
 <!--  请以markdown语法写下你的收藏
 
