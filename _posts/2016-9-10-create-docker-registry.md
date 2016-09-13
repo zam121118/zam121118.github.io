@@ -7,7 +7,6 @@ tags: Docker Linux
 author: Amy Zhong
 ---
 
-
 * content
 {:toc}
 
@@ -23,6 +22,7 @@ author: Amy Zhong
 IP：X.X.X.167
 
 查看系统：
+
 	cloud@cloud-m3-01:~$ uname -a
 Linux cloud-m3-01 3.19.0-58-generic #64~14.04.1-Ubuntu SMP Fri Mar 18 19:05:43 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
 cloud@cloud-m3-01:~$ cat /etc/issue
