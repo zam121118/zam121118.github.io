@@ -20,6 +20,7 @@ icon: bookmark
 
 * [A free EpubBooks website](https://www.epubbooks.com/subjects)
 
+* [bookgoodreaders: a recommended books website ](https://www.goodreads.com/)
 
 <!--  请以markdown语法写下你的收藏
 
