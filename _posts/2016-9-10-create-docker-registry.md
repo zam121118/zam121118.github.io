@@ -1,18 +1,18 @@
-﻿--- 
-layout: post 
-title: "搭建私有docker仓库" 
-date: 201-9-11 20:50 +0800 
-categories: docker 
-tags: docker 
-author: Amy Zhong 
+---
+layout: post
+title:  搭建 docker 私有仓库
+date:   2016-09-11 20:50:05
+categories: Docker
+tags: Docker Linux
+author: Amy Zhong
 ---
 
-
-* content 
+* content
 {:toc}
 
 
 实现容器化的第一步，搭建私有仓库。教育网用户可以换成清华的源。
+
 
 
 
@@ -23,19 +23,16 @@ IP：X.X.X.167
 
 查看系统：
 
-```
-cloud@cloud-m3-01:~$ uname -a
+	cloud@cloud-m3-01:~$ uname -a
 Linux cloud-m3-01 3.19.0-58-generic #64~14.04.1-Ubuntu SMP Fri Mar 18 19:05:43 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
 cloud@cloud-m3-01:~$ cat /etc/issue
 Ubuntu 14.04.5 LTS \n \l
 cloud@cloud-m3-01:~$ hostname
 cloud-m3-01
-```
 
 查看资源：
 
-```
-cloud@cloud-m3-01:~$ free -h
+	cloud@cloud-m3-01:~$ free -h
              total       used       free     shared    buffers     cached
 Mem:           39G       3.9G        35G       9.8M       275M       2.5G
 -/+ buffers/cache:       1.2G        38G
@@ -51,24 +48,26 @@ none             20G  148K   20G   1% /run/shm
 none            100M   40K  100M   1% /run/user
 /dev/sde2       237M   96M  129M  43% /boot
 /dev/sde1       511M  3.4M  508M   1% /boot/efi
-```
 
 查看CPU配置：应该是2个Cpu,每个Cpu有6个core,应该是Intel的U,支持超线程,所以显示24个逻辑CPU 
 
-```
-查看物理CPU的个数
-cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l
+* 查看物理CPU的个数
+
+	cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l
 2
 
-查看逻辑CPU的个数
-cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "processor"| wc -l
+
+* 查看逻辑CPU的个数
+
+	cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "processor"| wc -l
 24
 
-查看CPU是几核
-cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "cores" | uniq
+
+* 查看CPU是几核
+
+	cloud@cloud-m3-01:~$ cat /proc/cpuinfo | grep "cores" | uniq
 cpu cores	: 6
 
-```
 
 ## 安装docker
 
@@ -76,8 +75,7 @@ cpu cores	: 6
 
 ## 启动仓库容器
 
-```
-cloud@cloud-m3-01:~$ docker images
+	cloud@cloud-m3-01:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 registry            latest              c6c14b3960bd        5 weeks ago         33.31 MB
 cloud@cloud-m3-01:~$ docker run -d -v /registry:/var/lib/registry -p 5000:5000 --restart=always --name registry registry
@@ -85,14 +83,13 @@ cloud@cloud-m3-01:~$ docker run -d -v /registry:/var/lib/registry -p 5000:5000 -
 cloud@cloud-m3-01:~$ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
 1044750b2543        registry            "/entrypoint.sh /etc/"   3 minutes ago       Up 3 minutes        0.0.0.0:5000->5000/tcp   registry
-```
-Registry容器逻辑上将镜像保存在容器内/var/lib/registry，实际保存server的/registry目录了。
+
+Registry容器逻辑上将镜像保存在容器内`/var/lib/registry`，实际保存server的`/registry`目录了。
 
 
 ### 先从docker Hub下载镜像放在本地
 
-```
-cloud@cloud-m3-01:~$ docker search -s 100  ubuntu
+	cloud@cloud-m3-01:~$ docker search -s 100  ubuntu
 Flag --stars has been deprecated, use --filter=stars=3 instead
 NAME      DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
 ubuntu    Ubuntu is a Debian-based Linux operating s...   4649      [OK]       
@@ -106,11 +103,10 @@ c19118ca682d: Pull complete
 24e0251a0e2c: Pull complete 
 Digest: sha256:f4691c96e6bbaa99d99ebafd9af1b68ace2aa2128ae95a60369c506dd6e6f6ab
 Status: Downloaded newer image for ubuntu:latest
-```
+
 ### 下载的镜像打个tag准备推送到本地
 
-```
-cloud@cloud-m3-01:~$ docker tag ubuntu:latest 127.0.0.1:5000/ubuntu:latest
+	cloud@cloud-m3-01:~$ docker tag ubuntu:latest 127.0.0.1:5000/ubuntu:latest
 cloud@cloud-m3-01:~$ docker tag registry:latest 127.0.0.1:5000/registry:latest
 cloud@cloud-m3-01:~$ docker images
 REPOSITORY                TAG                 IMAGE ID            CREATED             SIZE
@@ -118,12 +114,11 @@ REPOSITORY                TAG                 IMAGE ID            CREATED       
 ubuntu                    latest              bd3d4369aebc        12 days ago         126.6 MB
 127.0.0.1:5000/registry   latest              c6c14b3960bd        5 weeks ago         33.31 MB
 registry                  latest              c6c14b3960bd        5 weeks ago         33.31 MB
-```
+
 
 ### 推送到私有仓库
 
-```
-cloud@cloud-m3-01:~$ docker push 127.0.0.1:5000/ubuntu:latest
+	cloud@cloud-m3-01:~$ docker push 127.0.0.1:5000/ubuntu:latest
 The push refers to a repository [127.0.0.1:5000/ubuntu]
 0cad5e07ba33: Pushed 
 48373480614b: Pushed 
@@ -139,24 +134,27 @@ d00444e19d65: Pushed
 aa3a31ee27f3: Pushed 
 4fe15f8d0ae6: Pushed 
 latest: digest: sha256:51d8869caea35f58dd6a2309423ec5382f19c4e649b5d2c0e3898493f42289d6 size: 1363
-```
+
 
 ### 查看server本地文件夹
-```
-查看本地文件夹下的镜像
-cloud@cloud-m3-01:/registry/docker/registry/v2/repositories$ ls
+
+* 查看本地文件夹下的镜像
+
+	cloud@cloud-m3-01:/registry/docker/registry/v2/repositories$ ls
 registry  ubuntu
 
-访问本server5000端口查看仓库
-cloud@cloud-m3-01:/registry/docker/registry/v2/repositories$ curl http://127.0.0.1:5000/v2/_catalog
+
+* 访问本server5000端口查看仓库
+
+	cloud@cloud-m3-01:/registry/docker/registry/v2/repositories$ curl http://127.0.0.1:5000/v2/_catalog
 {"repositories":["registry","ubuntu"]}
-```
+
 
 ## 验证仓库
 
 ### 删除本地镜像
-```
-cloud@cloud-m3-01:~$ docker images
+
+	cloud@cloud-m3-01:~$ docker images
 REPOSITORY                TAG                 IMAGE ID            CREATED             SIZE
 127.0.0.1:5000/ubuntu     latest              bd3d4369aebc        12 days ago         126.6 MB
 ubuntu                    latest              bd3d4369aebc        12 days ago         126.6 MB
@@ -168,12 +166,13 @@ cloud@cloud-m3-01:~$ docker rmi 127.0.0.1:5000/ubuntu
 cloud@cloud-m3-01:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 registry            latest              c6c14b3960bd        5 weeks ago         33.31 MB
+
 仓库只剩registry镜像，注意仓库容器正在使用该镜像，不要删除，也不要强制删除。
-```
+
 
 ### 从咱们私有仓库127.0.0.1:5000获取镜像
-```
-cloud@cloud-m3-01:~$ docker pull 127.0.0.1:5000/ubuntu:latest
+
+	cloud@cloud-m3-01:~$ docker pull 127.0.0.1:5000/ubuntu:latest
 latest: Pulling from ubuntu
 952132ac251a: Pull complete 
 82659f8f1b76: Pull complete 
@@ -186,14 +185,14 @@ cloud@cloud-m3-01:~$ docker images
 REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
 127.0.0.1:5000/ubuntu   latest              bd3d4369aebc        12 days ago         126.6 MB
 registry                latest              c6c14b3960bd        5 weeks ago         33.31 MB
-```
+
 仓库搭建告一段落，接下来尝试从其他机器访问该server下载镜像。
 
 ## 测试远程hosts从本server push/pull 镜像
 
-### 确保远程server到本机网络通。
-```
-amy@ubuntu-host2:~$ ping 202.117.16.167
+### 确保远程server到本机网络通
+
+	amy@ubuntu-host2:~$ ping 202.117.16.167
 PING 202.117.16.167 (202.117.16.167) 56(84) bytes of data.
 64 bytes from 202.117.16.167: icmp_seq=1 ttl=128 time=0.888 ms
 64 bytes from 202.117.16.167: icmp_seq=2 ttl=128 time=1.33 ms
@@ -201,22 +200,22 @@ PING 202.117.16.167 (202.117.16.167) 56(84) bytes of data.
 --- 202.117.16.167 ping statistics ---
 2 packets transmitted, 2 received, 0% packet loss, time 1001ms
 rtt min/avg/max/mdev = 0.888/1.111/1.334/0.223 ms
-```
+
 
 ### 为远程host daemon添加远程仓库
-```
-amy@ubuntu-host2:~$ sudo vim /etc/default/docker
-添加：
-DOCKER_OPTS="--insecure-registry XXX.XXX.XXX.167:5000"
-```
+
+	amy@ubuntu-host2:~$ sudo vim /etc/default/docker
+	add:
+	DOCKER_OPTS="--insecure-registry XXX.XXX.XXX.167:5000"
+
 
 ### 重启hosts docker服务&测试
-```
-amy@ubuntu-host2:~$ sudo service docker restart
+
+	amy@ubuntu-host2:~$ sudo service docker restart
 docker stop/waiting
 docker start/running, process XXXX
 
-amy@ubuntu-host2:~$ sudo docker pull XXX.XXX.XXX.167:5000/ubuntu:latest
+	amy@ubuntu-host2:~$ sudo docker pull XXX.XXX.XXX.167:5000/ubuntu:latest
 latest: Pulling from ubuntu
 436c176520d3: Pull complete 
 67891c7e4743: Pull complete 
@@ -226,4 +225,3 @@ b2a96566725c: Pull complete
 ae81bbda2b6c: Pull complete 
 Digest: sha256:110f9122f773b4d4898a7921019b4faf5a33873b17062b07f009cdfde9f32d77
 Status: Downloaded newer image for 202.117.16.167:5000/ubuntu:latest
-```
