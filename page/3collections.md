@@ -243,6 +243,9 @@ Syntax Theme: Atom Dark or One Dark
     95年出生的全栈。卢涛南，英文名 Randy，用 djyde 这个ID混迹于网络。
 
 * [JS前端开发群月报 -豪情等人维护](http://www.kancloud.cn/jsfront/month/82796) -->
+## books
+
+* [A free EpubBooks website](https://www.epubbooks.com/subjects)
 
 ## Comments
 
