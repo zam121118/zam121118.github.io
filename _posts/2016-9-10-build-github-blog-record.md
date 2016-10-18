@@ -11,9 +11,11 @@ author: Amy Zhong
 {:toc}
 
 
-
-
 记录搭建github博客及使用模板时遇到的问题。
+
+
+
+
 
 ## 搭建过程可参考
 
@@ -109,7 +111,7 @@ categories: AAA
 tags: AAA BBB  CCCC
 author: XXX XX
 ---
-
+                  #here has 1 blank lines
 * content
 {:toc}            #this is used to generate directory
 
@@ -117,6 +119,9 @@ author: XXX XX
 
 
 abstruct........  # abstruct is 4 lines away from directory
+
+
+                  #here has 2 blank lines
 ```
 
 ### 更改Jekyll服务端口
