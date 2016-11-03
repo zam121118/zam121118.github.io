@@ -1,4 +1,4 @@
-﻿# 搭建Docker仓库
+﻿# 搭建Docker仓库（1）
 
 标签（空格分隔）： docker 云计算组项目
 
@@ -264,15 +264,16 @@ Docker官方是推荐你采用**Secure Registry**的工作模式的，即transpo
 
 [Docker官方：Deploying a registry server](https://docs.docker.com/registry/deploying/)要求提供registry的server有一个域名，并从某知名CA签署获取证书。
 `mkdir -p certs`将证书及秘钥复制于此`certs/domain.crt`,`certs/domain.key`.
-并以```-v ~/certs:/certs-e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key```参数启动registry container, 即为`Secure Registry`。
+并以```-v ~/certs:/certs -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key```参数启动registry container, 即为`Secure Registry`。
 
 ### 自签证书搭建sercure registry
+
+可以参考docker官方给出的文件：[Using self-signed certificates](https://docs.docker.com/registry/insecure/)
 
 * SSL/TLS
 先谈一谈TLS，或者old name - SSL，及其加密方式。
 [SSL/TLS协议运行机制的概述](http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html)
 [图解SSL/TLS协议](http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html)
-
 
 
 木有指向该server的独立域名，也无法获得知名CA签发的证书，那就自签证书。
@@ -313,15 +314,34 @@ domain.crt  domain.key
 * 修改hosts
 
 证书的Common Name:mydockerhub.com，我们需要修改一下/etc/hosts文件:
-`XXX.XXX.XXX.167 mydockerhub.com` (要远程该仓库的Host也要改)
+`XXX.XXX.XXX.167 mydockerhub.com` **(要远程该仓库的Host也要改)**
 
-* 远程host需安装该证书
+* 使得远程docker daemon信任该证书
 
-docker client需要安装我们自己签发的CA证书：
+   远程docker daemon需要安装我们自己签发的CA证书：
+
 ```
-$(host) sudo mkdir -p /etc/docker/certs.d/mydockerhub.com:5000
-$(host) sudo cp certs/domain.crt /etc/docker/certs.d/mydockerhub.com:5000/ca.crt
-$(host) sudo service docker restart //安装证书后，重启Docker Daemon
+$(registry host) sudo mkdir -p /etc/docker/certs.d/mydockerhub.com:5000
+$(registry host) sudo cp certs/domain.crt /etc/docker/certs.d/mydockerhub.com:5000/ca.crt
+$(registry host) sudo service docker restart //安装证书后，重启Docker Daemon
+```
+
+   为远程docker daemon添加域名解析
+
+```
+vim /etc/hosts
+追加：
+XXX.XXX.XXX.167 mydockerhub.com
+```
+
+   为远程host daemon添加远程仓库**(不需要添加啊)**
+
+```
+amy@ubuntu-host2:~$ sudo vim /etc/default/docker
+添加：
+DOCKER_OPTS="--insecure-registry XXX.XXX.XXX.167:5000"
+#ADD_REGISTRY='--add-registry XXX.XXX.XXX.167:5000'  
+#INSECURE_REGISTRY='--insecure-registry XXX.XXX.XXX.167:5000'  
 ```
 
 * Registry的鉴权管理
@@ -335,18 +355,102 @@ amy@ubuntu-host2:~$ docker run --entrypoint htpasswd registry:latest -Bbn Cloud 
 amy@ubuntu-host2:~$ ls auth/
 htpasswd
 ```
-
-* 使用docker-compose启动有证书带有鉴权功能secure registry
-
+* 启动encrty TLS registry并login
 ```
+docker run -d -p 5000:5000 --restart=always --name registry \
+  -v `pwd`/auth:/auth \
+  -e "REGISTRY_AUTH=htpasswd" \
+  -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+  -v `pwd`/certs:/certs \
+  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
+  -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+  registry:2
 
+docker login myregistrydomain.com:5000
 ```
-
-
 
 ## 仓库WEB监控
 
-[ 使用官方 docker registry 搭建私有镜像仓库及部署 web ui](http://blog.csdn.net/mideagroup/article/details/52052618)
+[ 根据开源项目：mkuchin/docker-registry-web搭建](https://github.com/mkuchin/docker-registry-web)
+
+###  无认证方式
+
+```
+cloud@cloud-m3-01:~$ docker run -d -p 5000:5000 -v /registry:/var/lib/registry --name registry-srv registry:2
+f00c015d45454d7dfefaf46dd7191f480df47acb0d47342d5270134b86066f1c
+
+cloud@cloud-m3-01:~$ docker run -it -p 8443:8080 --name registry-web --link registry-srv -e REGISTRY_URL=http://registry-srv:5000/v2 -e REGISTRY_NAME=localhost:5000 hyper/docker-registry-web
+
+CATALINA_OPTS: -Djava.security.egd=file:/dev/./urandom -Dcontext.path=
+Using CATALINA_BASE:   /var/lib/tomcat7
+Using CATALINA_HOME:   /usr/share/tomcat7
+Using CATALINA_TMPDIR: /var/lib/tomcat7/temp
+Using JRE_HOME:        /usr/lib/jvm/java-7-openjdk-amd64
+Using CLASSPATH:       /usr/share/tomcat7/bin/bootstrap.jar:/usr/share/tomcat7/bin/tomcat-juli.jar
+Nov 03, 2016 2:30:31 AM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-bio-8080"]
+Nov 03, 2016 2:30:31 AM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 563 ms
+Nov 03, 2016 2:30:31 AM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service Catalina
+Nov 03, 2016 2:30:31 AM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet Engine: Apache Tomcat/7.0.52 (Ubuntu)
+2016-11-03 02:30:44,142 [localhost-startStop-1] INFO  hibernate4.HibernatePluginSupport  - Set db generation strategy to 'update' for datasource DEFAULT
+
+Configuring Spring Security Core ...
+... finished configuring Spring Security Core
+。。。。。。
+Nov 03, 2016 2:30:52 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 21377 ms
+```
+
+
+## 认证方式
+
+### start registry-srv:
+
+```
+cloud@cloud-m3-01:~$ docker run -d -p 5000:5000 --restart=always --name registry-srv \
+>   -v /home/cloud/certs:/certs \
+>   -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
+>   -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+>   -v /registry:/var/lib/registry \
+>   registry:2
+f7769df82b27a62338a0d11140994f20396a67a33732a658976fb58ec1835d72
+```
+
+### start registry-web
+
+```
+cloud@cloud-m3-01:~$ docker run --restart=always -d -p 8443:8080 -v /home/cloud/certs:/certs --name registry-web --link registry-srv \
+>            -e REGISTRY_URL=https://registry-srv:5000/v2 \
+>            -e REGISTRY_TRUST_ANY_SSL=true \
+>            -e REGISTRY_BASIC_AUTH=/certs/domain.crt \
+>            -e REGISTRY_NAME=mydockerhub.com:5000 \
+>            -e REGISTRY_READONLY=false \
+>            hyper/docker-registry-web
+458cd87550ba8234b5392d85ec107d18898d4a9faa75e5784d82e8e728d06e35
+```
+
+### check the containers
+
+```
+cloud@cloud-m3-01:~/certs$ docker ps -a
+CONTAINER ID        IMAGE                       COMMAND                  CREATED             STATUS              PORTS                    NAMES
+458cd87550ba        hyper/docker-registry-web   "start.sh"               4 seconds ago       Up 3 seconds        0.0.0.0:8443->8080/tcp   registry-web
+f7769df82b27        registry:2                  "/entrypoint.sh /etc/"   22 seconds ago      Up 20 seconds       0.0.0.0:5000->5000/tcp   registry-srv
+
+```
+
+### 问题
+
+参考Docker文件[《Registry Configuration Reference》](https://docs.docker.com/registry/configuration/#delete),应该可以通过书写`config.yml`配置文件启动registry。意味着在命令行启动`registry:2`时完全可以通过`-e REGISTRY_STORAGE_DELETE=true` 指定仓库中存储镜像的可删除性，并在`registry-web`中指定`-e REGISTRY_READONLY=false`,即可以直接在web端删除存储的镜像。
+
+**BUT**: 事实却是
+> Error deleting registry:latest: Deletion disabled in registry, more info(指向文章Registry Configuration Reference). 
+
+PS： 还没有想到解决办法。。。。。
 
 
 ##  镜像说明
