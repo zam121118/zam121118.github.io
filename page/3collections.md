@@ -16,6 +16,28 @@ icon: bookmark
 * [Jekyll](http://jekyll.bootcss.com/)
     Jekyll介绍
 
+## Vagrant
+
+* [Vagrant是一个基于Ruby的工具，用于创建和部署虚拟化开发环境。它 使用Oracle的开源VirtualBox虚拟化系统，使用 Chef创建自动化虚拟环境](http://www.oschina.net/p/vagrant)
+
+
+* Website
+    [https://www.vagrantup.com/](https://www.vagrantup.com/)
+
+
+* [mitchellh/vagrant](https://github.com/mitchellh/vagrant)
+
+## virt-manager
+
+virt-manager是用于管理KVM虚拟环境的主要工具，virt-manager默认设置下需要使用linux root用户才能够使用该工具
+
+### KVM 与 Qemu-kvm
+
+[KVM虚拟化技术之使用Qemu-kvm创建和管理虚拟机](http://www.tuicool.com/articles/i63Ivy)
+    
+## Nginx
+
+
 ## books
 
 * [A free EpubBooks website](https://www.epubbooks.com/subjects)
