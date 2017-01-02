@@ -17,6 +17,7 @@ author: Amy Zhong
 
 
 
+
 ## 搭建过程可参考
 
 [利用github pages建博客](http://cyzus.github.io/2015/06/21/github-build-blog/)
@@ -75,7 +76,7 @@ var _hmt = _hmt || [];
 (function() {
   var hm = document.createElement("script");
   hm.src = "//hm.baidu.com/hm.js?5eee93cbacd99ad9c8333398cdabeb53";
-  var s = document.getElementsByTagName("script")[0]; 
+  var s = document.getElementsByTagName("script")[0];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
@@ -83,7 +84,7 @@ var _hmt = _hmt || [];
 
 ### 在_ports中写博文
 
-关于本地渲染过程可以参考：[How jekyll works!!!](http://jekyllbootstrap.com/lessons/jekyll-introduction.html) 
+关于本地渲染过程可以参考：[How jekyll works!!!](http://jekyllbootstrap.com/lessons/jekyll-introduction.html)
 注意： [post文章头格式参考： YAML Front Matter](http://jekyllrb.com/docs/frontmatter/)
 
 * 博文编码格式
@@ -94,10 +95,10 @@ NOTE： 我之前blog写在作业部落中，一键导出功能导出的.md文�
 
 * 博文文件名
 
-> _posts This folder contains your dynamic content/posts. the naming format is required to be ` @YEAR-MONTH-DATE-title.MARKUP@`. If the data format is invalid Jekyll will not recognize the file as a post. 
+> _posts This folder contains your dynamic content/posts. the naming format is required to be ` @YEAR-MONTH-DATE-title.MARKUP@`. If the data format is invalid Jekyll will not recognize the file as a post.
 
-> **The date and title are automatically parsed from the filename of the post file.** Additionally, each file must have `YAML Front-Matter` prepended to its content. 
- 
+> **The date and title are automatically parsed from the filename of the post file.** Additionally, each file must have `YAML Front-Matter` prepended to its content.
+
 > `YAML Front-Matter` is a valid YAML syntax specifying meta-data for the given file.
 
 `.md` 文件开头格式如下：

@@ -17,6 +17,7 @@ author: Amy Zhong
 
 
 
+
 ## 我们常说的Docker
 
 其实，常说的 Docker 指的是 `Docker-Engine`, 即 Client-Server 结构的应用：由Client端通过 REST API 接口（Docker CLI，eg: docker run <image>, .... ）与 Docker daemon 进行任务定义，此处Docker server即为docker daemon。

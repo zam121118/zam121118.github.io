@@ -7,7 +7,6 @@ tags: Linux
 author: Amy Zhong
 ---
 
-
 * content
 {:toc}
 
@@ -16,6 +15,9 @@ dpkg安装deb包返回error code (1)
 
 
 
+
+
+## dpkg安装deb包返回error code (1)
 
 在我的环境中 `Xenial` ，每次运行 `sudo apt -y update && sudo apt -y upgrade` 的过程中，总是忘记去关掉正在运行的`VBox Win10`, 所以每次升级都会弹出来提醒我手动关掉。
 手动关掉了，但是`apt`对新版本的`VirtualBox`解包后，安装就会报类似的错误：
@@ -36,6 +38,8 @@ A copy of VirtualBox is currently running.  Please close it and try again.
  /var/cache/apt/archives/virtualbox-5.1_5.1.12-112440~Ubuntu~xenial_amd64.deb
 E: Sub-process /usr/bin/dpkg returned an error code (1)
 ```
+
+## 解决办法
 
 注意对于这一类的错误 `E: Sub-process /usr/bin/dpkg returned an error code (1)`， 通用解决方法：
 
